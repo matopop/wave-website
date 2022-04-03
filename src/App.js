@@ -31,9 +31,9 @@ const App = () =>{
 				const provider = new ethers.providers.Web3Provider(ethereum);
 				const signer = provider.getSigner();
 				const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
-
+				console.log("avant await")
 				const waves = await wavePortalContract.getAllWaves();
-
+				console.log("apres await")
 				let wavesCleaned = [];
 				waves.forEach(wave => {
 					wavesCleaned.push({
@@ -42,7 +42,7 @@ const App = () =>{
 						message: wave.message
 					});
 				});
-
+				console.log("avant set")
 				setAllWaves(wavesCleaned);
 			} else {
 				console.log("Ethereum object doesn't exist!")
@@ -97,7 +97,6 @@ const App = () =>{
 				alert("Get Metamask!");
 				return;
 			}
-
 			const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
 			console.log("Connected", accounts[0]);
@@ -151,6 +150,7 @@ const App = () =>{
 
 	const displayTable = () =>
 		<>
+		{console.log("ok")}
 		{allWaves.map((wave, index) => {
 			return (
 			  <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
@@ -168,14 +168,13 @@ const App = () =>{
 		  })}
 		  </>
 	
-
 	React.useEffect(() => {
 		checkIfWalletIsConnected();
 	}, [])
 	
 	React.useEffect(() => {
 		getAllWaves();
-	}, [waveReceived])
+	}, [currentAccount, waveReceived])
   
   return (
     <div className="mainContainer">
@@ -221,6 +220,7 @@ const App = () =>{
         </button>
 		}
 		{displayTable()}
+		
       </div>
     </div>
   );
