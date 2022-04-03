@@ -120,10 +120,9 @@ React.useEffect(() => {
         </div>
 
         <div className="bio">
-        Salut chien maigre, connecte toi puis aboie.
-		<br />
-		<br />
-		<a href={etherscanContractAddress} target="_blank">Adresse du contrat</a>
+        Salut chien maigre, connecte toi puis aboie.<br /><br />
+		<a href={etherscanContractAddress} target="_blank">Adresse du contrat</a><br />
+		<a href="https://faucets.chain.link/rinkeby" target="_blank">Faucet</a>
         </div>
 		
 		{/* If there is no currentAccount, it will render the - connect - button */}
