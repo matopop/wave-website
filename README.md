@@ -1,4 +1,4 @@
-# A little website coded with React, allowing anyone to wave at my rinkeby contract.
+# A little website coded with React, allowing anyone to send and show his preferred quote to my rinkeby contract and on the front-end
 
 To launch the website on local, write this on your terminal:
 

@@ -15,7 +15,7 @@ const App = () =>{
 
 	
 
-	const contractAddress = "0xe572db35E450996A6Ccd4Fb2eC2FCfE21DFD0a3E";
+	const contractAddress = "0xE5D16d18335aA3193eB1a2110673FC27Bdbf1776";
 	const etherscanContractAddress = "https://rinkeby.etherscan.io/address/".concat(contractAddress);
 	const contractABI = abi.abi;
 
