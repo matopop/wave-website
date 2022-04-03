@@ -6,3 +6,5 @@ To launch the website on local, write this on your terminal:
 
 You'll need Metamask installed on your browser to be able to connect your wallet.
 Then you will need some rinkeby eth (type "rinkeby faucet" on google to receive some on your eth wallet).
+
+[Chainlink faucet](https://faucets.chain.link/rinkeby)
