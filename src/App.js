@@ -7,13 +7,11 @@ import './App.css';
 const App = () =>{
 	const [quote, setQuote] = useState("");
 
-	const [currentAccount, setCurrentAccount] = useState("");
+	const [currentAccount, setCurrentAccount] = useState(null);
 
 	const [waveReceived, setWaveReceived] = useState(false);
 	
 	const [allWaves, setAllWaves] = useState([]);
-
-	
 
 	const contractAddress = "0xE5D16d18335aA3193eB1a2110673FC27Bdbf1776";
 	const etherscanContractAddress = "https://rinkeby.etherscan.io/address/".concat(contractAddress);
@@ -167,7 +165,53 @@ const App = () =>{
 			  </div>)
 		  })}
 		  </>
-	
+
+		const displayEntries = () =>
+		  	<>
+			{/* If there is no currentAccount, it will render the - connect - button */}
+			{(!currentAccount) && 
+        	<button className="waveButton" onClick={connectWallet}>
+          	Se connecter
+        	</button>
+			}
+			{/* If there is a currentAccount, it will render the - wave - button */}
+			{(currentAccount) &&
+				<>
+				<form className="waveButton">
+					<input onChange={(event) => handleChange(event)}
+						type="text"
+						placeholder="Insère ta citation"
+					/>
+					{(quote === '') && <button disabled>Soumettre</button>}
+					{(quote !== '') && <button type="button" onClick={() => wave()}>Soumettre</button>}
+				</form>
+				</>
+			}
+			{(currentAccount && waveReceived) &&
+			<button className="received">
+			  🦁 Reçu!
+			</button>
+			}
+			</>
+
+		const displayInformations = () =>
+			<>
+				<div className="header">
+					👋 Yo !
+				</div>
+
+				<div className="bio">
+					Hey, écrit moi ta citation préférée :).<br /><br />
+					<a href={etherscanContractAddress} target="_blank" rel="noreferrer">Adresse du contrat</a><br />
+					<a href="https://faucets.chain.link/rinkeby" target="_blank" rel="noreferrer">Faucet</a>
+					
+					{(currentAccount) &&
+						<>
+						<br/><br/>
+						Ton adresse: {currentAccount}
+						</>}
+				</div>
+			</>
 	React.useEffect(() => {
 		checkIfWalletIsConnected();
 	}, [])
@@ -178,49 +222,10 @@ const App = () =>{
   
   return (
     <div className="mainContainer">
-
       <div className="dataContainer">
-        <div className="header">
-        👋 Yo !
-        </div>
-
-        <div className="bio">
-        Hey, écrit moi ta citation préférée :).<br /><br />
-		<a href={etherscanContractAddress} target="_blank" rel="noreferrer">Adresse du contrat</a><br />
-		<a href="https://faucets.chain.link/rinkeby" target="_blank" rel="noreferrer">Faucet</a>
-		{(currentAccount) &&
-		<><br/><br/>
-		Ton adresse: {currentAccount}
-		</>}
-        </div>
-		
-		{/* If there is no currentAccount, it will render the - connect - button */}
-		{(!currentAccount) && 
-        <button className="waveButton" onClick={connectWallet}>
-          Se connecter
-        </button>
-		}
-		{/* If there is a currentAccount, it will render the - wave - button */}
-		
-		{(currentAccount) &&
-			<>
-			<form className="waveButton">
-				<input onChange={(event) => handleChange(event)}
-					type="text"
-					placeholder="Insère ta citation"
-				/>
-				{(quote === '') && <button disabled>Soumettre</button>}
-				{(quote !== '') && <button type="button" onClick={() => wave()}>Soumettre</button>}
-			</form>
-			</>
-		}
-		{(currentAccount && waveReceived) &&
-        <button className="received">
-          🦁 Reçu!
-        </button>
-		}
+		{displayInformations()}
+		{displayEntries()}
 		{displayTable()}
-		
       </div>
     </div>
   );
