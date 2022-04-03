@@ -28,9 +28,9 @@
 	cursor: pointer;
 	margin-top: 16px;
 	padding: 8px;
-	border: 0;
 	border-radius: 5px;
-	
+	justify-content: center;
+	display: flex;
   }
 
   .received {
@@ -38,6 +38,4 @@
 	padding: 8px;
 	border: 0;
 	border-radius: 5px;
-
-	
   }

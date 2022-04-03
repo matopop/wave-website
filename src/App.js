@@ -5,14 +5,52 @@ import abi from "./utils/WavePortal.json"
 import './App.css';
 
 const App = () =>{
+	const [quote, setQuote] = useState("");
 
 	const [currentAccount, setCurrentAccount] = useState("");
 
 	const [waveReceived, setWaveReceived] = useState(false);
+	
+	const [allWaves, setAllWaves] = useState([]);
 
-	const contractAddress = "0xA4F8Ac35E32660f837d9417daDEdebf06F10cFE9";
+	
+
+	const contractAddress = "0xe572db35E450996A6Ccd4Fb2eC2FCfE21DFD0a3E";
 	const etherscanContractAddress = "https://rinkeby.etherscan.io/address/".concat(contractAddress);
 	const contractABI = abi.abi;
+
+	const handleChange = (event) => {
+		setQuote(event.target.value);
+		console.log(quote);
+	}
+
+	const getAllWaves = async () => {
+		try {
+			const { ethereum } = window;
+			if (ethereum) {
+				const provider = new ethers.providers.Web3Provider(ethereum);
+				const signer = provider.getSigner();
+				const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+				const waves = await wavePortalContract.getAllWaves();
+
+				let wavesCleaned = [];
+				waves.forEach(wave => {
+					wavesCleaned.push({
+						address: wave.waver,
+						timestamp: new Date(wave.timestamp * 1000),
+						message: wave.message
+					});
+				});
+
+				setAllWaves(wavesCleaned);
+			} else {
+				console.log("Ethereum object doesn't exist!")
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	//async -> allow to use await -> which enable promise-based bahavior to be written
 	const checkIfWalletIsConnected = async () => {
@@ -40,6 +78,7 @@ const App = () =>{
 				const account = accounts[0]; //take the first account :)
 				console.log("Found an authorized account:", account);
 				setCurrentAccount(account);
+				getAllWaves();
 			} else {
 				console.log("No authorized account found");
 			}
@@ -71,8 +110,9 @@ const App = () =>{
 	const wave = async () => {
 		try {
 			const { ethereum } = window;
-
+			
 			if (ethereum) {
+				
 				setWaveReceived(false);
 				const provider = new ethers.providers.Web3Provider(ethereum);
 				const signer = provider.getSigner();
@@ -81,10 +121,11 @@ const App = () =>{
 
 				let count = await wavePortalContract.getTotalWaves();
 				let countBackUp = count;
-				console.log("Nombre total de signe: ", count.toNumber());
+				console.log("Total waves: ", count.toNumber());
 
 				//Execute the actual wave from the smart contract
-				const waveTx = await wavePortalContract.wave();
+				
+				const waveTx = await wavePortalContract.wave(quote);
 
 				console.log("Mining ...", waveTx.hash);
 
@@ -92,24 +133,49 @@ const App = () =>{
 				console.log("Mined -- ", waveTx.hash);
 
 				count = await wavePortalContract.getTotalWaves();
-				if (count != countBackUp)
+				if (count !== countBackUp)
 				{
-					console.log("Nombre total de signe: ", count.toNumber());
+					console.log("Total waves: ", count.toNumber());
 					setWaveReceived(true);
 				}
 
 			} else {
-				console.log("L'objet Ethereum n'existe pas!");
+				console.log("Ethereum object doesn't exist!");
+				
 			}
 		} catch (error) {
 			console.log(error);
 		}
-		console.log("You have been waved");
+		console.log("Message mined: ", quote);
 	}
 
-React.useEffect(() => {
-	checkIfWalletIsConnected();
-}, [])
+	const displayTable = () =>
+		<>
+		{allWaves.map((wave, index) => {
+			return (
+			  <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+				<div>Address: {wave.address}</div>
+				<div>Time: {
+						wave.timestamp.getDate()+
+					  "/"+(wave.timestamp.getMonth() + 1)+
+					  "/"+wave.timestamp.getFullYear()+
+					  " "+wave.timestamp.getHours()+
+					  ":"+wave.timestamp.getMinutes()+
+					  ":"+wave.timestamp.getSeconds()
+					  }</div>
+				<div>Message: {wave.message}</div>
+			  </div>)
+		  })}
+		  </>
+	
+
+	React.useEffect(() => {
+		checkIfWalletIsConnected();
+	}, [])
+	
+	React.useEffect(() => {
+		getAllWaves();
+	}, [waveReceived])
   
   return (
     <div className="mainContainer">
@@ -120,9 +186,9 @@ React.useEffect(() => {
         </div>
 
         <div className="bio">
-        Salut chien maigre, connecte toi puis aboie.<br /><br />
-		<a href={etherscanContractAddress} target="_blank">Adresse du contrat</a><br />
-		<a href="https://faucets.chain.link/rinkeby" target="_blank">Faucet</a>
+        Hey, écrit moi ta citation préférée :).<br /><br />
+		<a href={etherscanContractAddress} target="_blank" rel="noreferrer">Adresse du contrat</a><br />
+		<a href="https://faucets.chain.link/rinkeby" target="_blank" rel="noreferrer">Faucet</a>
 		{(currentAccount) &&
 		<><br/><br/>
 		Ton adresse: {currentAccount}
@@ -136,16 +202,25 @@ React.useEffect(() => {
         </button>
 		}
 		{/* If there is a currentAccount, it will render the - wave - button */}
-		{(currentAccount) && 
-        <button className="waveButton" onClick={wave}>
-          Aboyer
-        </button>
+		
+		{(currentAccount) &&
+			<>
+			<form className="waveButton">
+				<input onChange={(event) => handleChange(event)}
+					type="text"
+					placeholder="Insère ta citation"
+				/>
+				{(quote === '') && <button disabled>Soumettre</button>}
+				{(quote !== '') && <button type="button" onClick={() => wave()}>Soumettre</button>}
+			</form>
+			</>
 		}
 		{(currentAccount && waveReceived) &&
         <button className="received">
-          🦁 Reçu! 
+          🦁 Reçu!
         </button>
 		}
+		{displayTable()}
       </div>
     </div>
   );
