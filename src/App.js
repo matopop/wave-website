@@ -123,6 +123,10 @@ React.useEffect(() => {
         Salut chien maigre, connecte toi puis aboie.<br /><br />
 		<a href={etherscanContractAddress} target="_blank">Adresse du contrat</a><br />
 		<a href="https://faucets.chain.link/rinkeby" target="_blank">Faucet</a>
+		{(currentAccount) &&
+		<><br/><br/>
+		Ton adresse: {currentAccount}
+		</>}
         </div>
 		
 		{/* If there is no currentAccount, it will render the - connect - button */}
