@@ -13,7 +13,7 @@ const App = () =>{
 	
 	const [allWaves, setAllWaves] = useState([]);
 
-	const contractAddress = "0xE5D16d18335aA3193eB1a2110673FC27Bdbf1776";
+	const contractAddress = "0xa675ba45c90cfAF4eaaa385b85bF94D4c5Cd4702";
 	const etherscanContractAddress = "https://rinkeby.etherscan.io/address/".concat(contractAddress);
 	const contractABI = abi.abi;
 
@@ -122,7 +122,7 @@ const App = () =>{
 
 				//Execute the actual wave from the smart contract
 				
-				const waveTx = await wavePortalContract.wave(quote);
+				const waveTx = await wavePortalContract.wave(quote, { gasLimit: 300000});
 
 				console.log("Mining ...", waveTx.hash);
 
@@ -180,10 +180,10 @@ const App = () =>{
 				<form className="waveButton">
 					<input onChange={(event) => handleChange(event)}
 						type="text"
-						placeholder="Insère ta citation"
+						placeholder="Insert your quote"
 					/>
-					{(quote === '') && <button disabled>Soumettre</button>}
-					{(quote !== '') && <button type="button" onClick={() => wave()}>Soumettre</button>}
+					{(quote === '') && <button disabled>Submit</button>}
+					{(quote !== '') && <button type="button" onClick={() => wave()}>Submit</button>}
 				</form>
 				</>
 			}
@@ -201,14 +201,17 @@ const App = () =>{
 				</div>
 
 				<div className="bio">
-					Hey, écrit moi ta citation préférée :).<br /><br />
-					<a href={etherscanContractAddress} target="_blank" rel="noreferrer">Adresse du contrat</a><br />
+					Here you can enter your prefered quote :).<br />
+					By entering your prefered quote, you'll try your luck to win 0.0001 eth.<br />
+					- Your address can win only 1 time -<br />
+					- You need to wait 120 seconds between every participations -<br />
+					<a href={etherscanContractAddress} target="_blank" rel="noreferrer">Contract address</a><br />
 					<a href="https://faucets.chain.link/rinkeby" target="_blank" rel="noreferrer">Faucet</a>
 					
 					{(currentAccount) &&
 						<>
 						<br/><br/>
-						Ton adresse: {currentAccount}
+						Your address: {currentAccount}
 						</>}
 				</div>
 			</>
