@@ -2,6 +2,10 @@
 
 To launch the website on local, write this on your terminal:
 
+### `cd my-wave-website`
+
+### `npm i`
+
 ### `npm start`
 
 You'll need Metamask installed on your browser to be able to connect your wallet.
